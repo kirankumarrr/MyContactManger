@@ -1,0 +1,9 @@
+React-Router
+npm i react-router-dom
+
+TO make https request use thi link 
+https://jsonplaceholder.typicode.com/ 
+
+
+installing axios
+npm i axios
