@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { Consumer } from "../../context";
+import axios from "axios";
 
 class Contact extends Component {
   constructor() {
@@ -13,9 +14,40 @@ class Contact extends Component {
   showClick = e => {
     this.setState({ showContactInfo: !this.state.showContactInfo });
   };
+
+  /*
+    1) Need to knnow why async call is important ??
+    2) When i dont use await what will happen ? 
+    3) Props and Cons ?? 
   DeleteConatact(id, dispatch) {
-    dispatch({ type: "DELETE_CONTACT", payload: id });
+    // Adding api to delete contacts :
+    axios
+      .delete(`https://jsonplaceholder.typicode.com/users/${id}`)
+      .then(Response => dispatch({ type: "DELETE_CONTACT", payload: id }));
+
+    //dispatch({ type: "DELETE_CONTACT", payload: id });
   }
+// Here i'm going to use asynch
+//commenting aboeve code
+*/
+
+  DeleteConatact = async (id, dispatch) => {
+    // Adding api to delete contacts :
+    // await axios
+    //   .delete(`https://jsonplaceholder.typicode.com/users/${id}`)
+    //   .then(Response => dispatch({ type: "DELETE_CONTACT", payload: id }));
+
+    // WHen you add new DAta which not stored in DATABASE since we dont have any
+    //to handle those kind of scenarious we can do with Try Catch MEthod
+
+    try {
+      await axios.delete(`https://jsonplaceholder.typicode.com/users/${id}`);
+      dispatch({ type: "DELETE_CONTACT", payload: id });
+    } catch (e) {
+      dispatch({ type: "DELETE_CONTACT", payload: id });
+    }
+  };
+  //Verify Everything working fine
   render() {
     const { id, name, email, phone } = this.props.contacts;
     const showContactInfo = this.state.showContactInfo;

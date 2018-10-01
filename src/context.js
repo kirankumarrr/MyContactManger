@@ -36,38 +36,33 @@ const reducer = (state, action) => {
 
 export class Provider extends Component {
   state = {
-    contacts: [
-      // {
-      //   id: "1",
-      //   name: "john",
-      //   email: "john@gmail.com",
-      //   phone: "555-555-5555"
-      // },
-      // {
-      //   id: "2",
-      //   name: "jack",
-      //   email: "jack@gmail.com",
-      //   phone: "444-444-4444"
-      // },
-      // {
-      //   id: "3",
-      //   name: "Henery",
-      //   email: "Henery@gmail.com",
-      //   phone: "999-999-9999"
-      // }
-      // Removed static data and calling it through api
-    ],
+    contacts: [],
     dispatch: action => {
       this.setState(state => reducer(state, action));
     },
     stateEmpty: false
   };
   //Using ComponentDidMount for api calls
-  componentDidMount() {
-    axios
-      .get("https://jsonplaceholder.typicode.com/users")
-      .then(response => this.setState({ contacts: response.data }));
+  //Commenting this code so that i can work on asynchronos method
+  // componentDidMount() {
+  //   axios
+  //     .get("https://jsonplaceholder.typicode.com/users")
+  //     .then(response => this.setState({ contacts: response.data }));
+  // }
+  // now here we are using asynchronos method
+  //1) Here you need to add "async componentDidMount()"
+  //2) When you get response store it into variable
+  //3) Make sure you add "await" infront of axios because it wait's until i get response
+  async componentDidMount() {
+    const response = await axios.get(
+      "https://jsonplaceholder.typicode.com/users"
+    );
+    console.log(response);
+    //.then(response => this.setState({ contacts: response.data }));
+
+    this.setState({ contacts: response.data });
   }
+
   render() {
     return (
       <Context.Provider value={this.state}>

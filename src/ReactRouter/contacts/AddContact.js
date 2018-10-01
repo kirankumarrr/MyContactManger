@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Consumer } from "../../context";
 import TextInputGroups from "../layouts/TextInputGroups";
 import uuid from "uuid";
+import axios from "axios";
 class AddContact extends Component {
   state = {
     name: "",
@@ -10,7 +11,7 @@ class AddContact extends Component {
     // Added error object
     errors: {}
   };
-  onSubmit = (dispatch, e) => {
+  onSubmit = async (dispatch, e) => {
     e.preventDefault();
     const { name, email, phone } = this.state;
     //First time error you are setting state but not returing
@@ -30,12 +31,28 @@ class AddContact extends Component {
       //This is the return you failed to do so
     }
     const newContacts = {
-      id: uuid(),
+      // id: uuid(),
+      //commenting this becasue when we post request automatically it create a unique id
       name,
       email,
       phone
     };
-    dispatch({ type: "ADD_CONTACT", payload: newContacts });
+    //Commenting belwo code
+    // await axios
+    //   .post("https://jsonplaceholder.typicode.com/users", newContacts)
+    //   // Here im calling api and passing new Object newContacst
+    //   .then(Response =>
+    //     dispatch({ type: "ADD_CONTACT", payload: Response.data })
+    //   );
+    //I can do this way as well
+    const Response = await axios.post(
+      "https://jsonplaceholder.typicode.com/users",
+      newContacts
+    );
+    // Here im calling api and passing new Object newContacst
+
+    dispatch({ type: "ADD_CONTACT", payload: Response.data });
+    //dispatch({ type: "ADD_CONTACT", payload: newContacts });
     // Clear input elements after Adding new contact
     this.setState({
       name: "",
