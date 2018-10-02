@@ -4,15 +4,17 @@ import axios from "axios";
 const Context = React.createContext();
 
 //Creatig redux for managing State
-
+//THe reason here we are iterating because it should know which specific contact is getting update.
+//But in case of add we directly passing complete object so even new unique id will be generated
+//Here we are checking if id mataches or else keep existing contact data itself
 const reducer = (state, action) => {
-  if (state.contacts.length === 1 && action.type === "DELETE_CONTACT") {
-    return {
-      ...state,
-      stateEmpty: true,
-      contacts: state.contacts.filter(contact => contact.id !== action.payload)
-    };
-  }
+  // if (state.contacts.length === 1 && action.type === "DELETE_CONTACT") {
+  //   return {
+  //     ...state,
+  //     stateEmpty: true,
+  //     contacts: state.contacts.filter(contact => contact.id !== action.payload)
+  //   };
+  // }
   switch (action.type) {
     case "DELETE_CONTACT":
       return {
@@ -22,11 +24,29 @@ const reducer = (state, action) => {
         )
       };
     case "ADD_CONTACT":
+      return { ...state, contacts: [action.payload, ...state.contacts] };
+
+    // case "UPDATE_CONTACT":
+    //   return {
+    //     ...state,
+    //     contacts: state.contacts.map(contact => {
+    //       contact.id === action.payload.id
+    //         ? (contact = action.payload)
+    //         : contact;
+    //     })
+    //   };
+    // This above code is not returning any object
+
+    case "UPDATE_CONTACT":
       return {
         ...state,
-        contacts: [action.payload, ...state.contacts]
+        contacts: state.contacts.map(
+          contact =>
+            contact.id === action.payload.id
+              ? (contact = action.payload)
+              : contact
+        )
       };
-
     default:
       return state;
   }

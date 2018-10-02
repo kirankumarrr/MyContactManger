@@ -1,73 +1,71 @@
 import React, { Component } from "react";
 import { Consumer } from "../../context";
 import TextInputGroups from "../layouts/TextInputGroups";
-// import uuid from "uuid";
 import axios from "axios";
-class AddContact extends Component {
+class EditContact extends Component {
   state = {
     name: "",
     email: "",
     phone: "",
-    // Added error object
     errors: {}
   };
+  // Here im getting data with the help of ID whichis passed from Link from App.js file
+  async componentDidMount() {
+    const { id } = this.props.match.params;
+    const res = await axios.get(
+      `https://jsonplaceholder.typicode.com/users/${id}`
+    );
+
+    const contacts = res.data;
+    this.setState({
+      name: contacts.name,
+      email: contacts.email,
+      phone: contacts.phone
+    });
+  }
+  //ABove code is to get data and put it into input elements
   onSubmit = async (dispatch, e) => {
     e.preventDefault();
     const { name, email, phone } = this.state;
-    //First time error you are setting state but not returing
     if (name === "") {
       this.setState({ errors: { name: "Name is required" } });
       return;
-      //This is the return you failed to do so
     }
     if (email === "") {
       this.setState({ errors: { email: "Name is required" } });
       return;
-      //This is the return you failed to do so
     }
     if (phone === "") {
       this.setState({ errors: { phone: "Name is required" } });
       return;
-      //This is the return you failed to do so
     }
-    const newContacts = {
-      // id: uuid(),
-      //commenting this becasue when we post request automatically it create a unique id
+    //Update the modified data and send PUT request here
+    //creating a new obj to read what ever is avaiable in present input elements
+    const updatecontacts = {
       name,
       email,
       phone
     };
-    //Commenting belwo code
-    // await axios
-    //   .post("https://jsonplaceholder.typicode.com/users", newContacts)
-    //   // Here im calling api and passing new Object newContacst
-    //   .then(Response =>
-    //     dispatch({ type: "ADD_CONTACT", payload: Response.data })
-    //   );
-    //I can do this way as well
-    const Response = await axios.post(
-      "https://jsonplaceholder.typicode.com/users",
-      newContacts
-    );
-    // Here im calling api and passing new Object newContacst
+    const { id } = this.props.match.params;
 
-    dispatch({ type: "ADD_CONTACT", payload: Response.data });
-    //dispatch({ type: "ADD_CONTACT", payload: newContacts });
-    // Clear input elements after Adding new contact
+    const updateResponse = await axios.put(
+      `https://jsonplaceholder.typicode.com/users/${id}`,
+      updatecontacts
+    );
+    dispatch({ type: "UPDATE_CONTACT", payload: updateResponse.data });
+
     this.setState({
       name: "",
       email: "",
       phone: "",
       errors: {}
     });
-    // Here we are redirecting after click on submit
-    // to do so use
     this.props.history.push("/");
   };
   onChange = e => {
     this.setState({ [e.target.name]: e.target.value });
   };
-  //    {this.setState({[e.target.name], e.target.value})}
+
   render() {
     const { name, email, phone, errors } = this.state;
     return (
@@ -76,7 +74,7 @@ class AddContact extends Component {
           const { dispatch } = value;
           return (
             <div className="card mb-3">
-              <div className="card-header">Add Contact</div>
+              <div className="card-header">Edit Contact</div>
               <div className="card-body">
                 <form onSubmit={this.onSubmit.bind(this, dispatch)}>
                   <TextInputGroups
@@ -106,7 +104,7 @@ class AddContact extends Component {
                   />
                   <input
                     type="submit"
-                    value="Add Contact"
+                    value="Update Contact"
                     className="btn btn-light btn-block"
                   />
                 </form>
@@ -118,4 +116,4 @@ class AddContact extends Component {
     );
   }
 }
-export default AddContact;
+export default EditContact;
